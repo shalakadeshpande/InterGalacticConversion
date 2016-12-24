@@ -14,33 +14,19 @@ Symbol
 
 Value
 
-I
+I | 1 <br/>
 
-1
+V | 5 <br/>
 
-V
+X | 10 <br/>
 
-5
+L | 50 <br/>
 
-X
+C | 100 <br/>
 
-10
+D | 500 <br/>
 
-L
-
-50
-
-C
-
-100
-
-D
-
-500
-
-M
-
-1,000
+M | 1,000 <br/>
 
  
 Numbers are formed by combining symbols together and adding the values. For example, MMVI is 1000 + 1000 + 5 + 1 = 2006. Generally, symbols are placed in order of value, starting with the largest values. When smaller values precede larger values, the smaller values are subtracted from the larger values, and the result is added to the total. For example MCMXLIV = 1000 + (1000 − 100) + (50 − 10) + (5 − 1) = 1944.
@@ -56,22 +42,22 @@ Input to your program consists of lines of text detailing your notes on the conv
 You are expected to handle invalid queries appropriately.
  
 Test input:
-glob is I
-prok is V
-pish is X
-tegj is L
-glob glob Silver is 34 Credits
-glob prok Gold is 57800 Credits
-pish pish Iron is 3910 Credits
-how much is pish tegj glob glob ?
-how many Credits is glob prok Silver ?
-how many Credits is glob prok Gold ?
-how many Credits is glob prok Iron ?
-how much wood could a woodchuck chuck if a woodchuck could chuck wood ?
+glob is I <br/>
+prok is V <br/>
+pish is X <br/>
+tegj is L <br/>
+glob glob Silver is 34 Credits <br/>
+glob prok Gold is 57800 Credits <br/>
+pish pish Iron is 3910 Credits <br/>
+how much is pish tegj glob glob ? <br/>
+how many Credits is glob prok Silver ? <br/>
+how many Credits is glob prok Gold ? <br/>
+how many Credits is glob prok Iron ? <br/>
+how much wood could a woodchuck chuck if a woodchuck could chuck wood ?<br/>
  
 Test Output:
-pish tegj glob glob is 42
-glob prok Silver is 68 Credits
-glob prok Gold is 57800 Credits
-glob prok Iron is 782 Credits
-I have no idea what you are talking about
+pish tegj glob glob is 42<br/>
+glob prok Silver is 68 Credits<br/>
+glob prok Gold is 57800 Credits<br/>
+glob prok Iron is 782 Credits<br/>
+I have no idea what you are talking about<br/>

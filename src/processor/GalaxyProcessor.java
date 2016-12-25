@@ -36,25 +36,29 @@ public class GalaxyProcessor implements Processor {
 	@Override
 	public String process(List<String> fileContents) {
 		StringBuilder outputToFile = new StringBuilder();
+		String outputEachLine;
 
 		for (String eachLine : fileContents) {
-
-			if (hasQuestion(eachLine)) {
-				String outputEachLine;
-				try {
+			try {
+				if (hasQuestion(eachLine)) {
 					outputEachLine = handleQuery(eachLine);
-				} catch (IdontKnowException e) {
-					outputEachLine = e.getMessage() + " " + e.getInput();
+					
+					if (outputToFile.length() != 0) {
+						outputToFile.append(System
+								.getProperty("line.separator"));
+					}
+					outputToFile.append(outputEachLine);
+				} else if (hasMetalNames(eachLine)) {
+					populateMetalInfo(eachLine);
+				} else {
+					populateGalacticToRomanMap(eachLine);
 				}
-				if (outputToFile.length() != 0) {
-					outputToFile.append(System.getProperty("line.separator"));
-
-				}
+			} catch (IdontKnowException e) {
+				outputToFile.append(System
+						.getProperty("line.separator"));
+				outputEachLine = e.getMessage() + " " + e.getInput();
 				outputToFile.append(outputEachLine);
-			} else if (hasMetalNames(eachLine)) {
-				populateMetalInfo(eachLine);
-			} else {
-				populateGalacticToRomanMap(eachLine);
+				
 			}
 
 		}
@@ -66,15 +70,12 @@ public class GalaxyProcessor implements Processor {
 		return inputLine.endsWith("?");
 	}
 
-	private void populateGalacticToRomanMap(String eachLine) {
+	private void populateGalacticToRomanMap(String eachLine)
+			throws IdontKnowException {
 
 		String[] tokens = eachLine.split(" ");
-		int indexOfIs = getIndexOfIs(tokens);
-		if (indexOfIs < 0) { // TODO : Create custom UnitsCalibrationException
-			throw new RuntimeException(
-					"Callibration Error - Non Single Digit Unit - I do not know what is this - "
-							+ eachLine);
-		}
+		int indexOfIs = getIndexOfIs(eachLine);
+
 		String[] galaxyUnit = getTokensBeforeIs(tokens, indexOfIs);
 		String[] romanUnit = getTokensAfterIs(tokens, indexOfIs);
 		validateUnit(eachLine, galaxyUnit);
@@ -90,21 +91,16 @@ public class GalaxyProcessor implements Processor {
 
 		if (unit.length != 1) {
 			throw new RuntimeException(
-					"Callibration Error - Non Single Digit Unit - I do not know what is this - "
-							+ eachLine);
+					"Invalid Roman Digit - I do not know what is this - "
+							+ Arrays.toString(unit));
 		}
 
 	}
 
-	private void populateMetalInfo(String eachLine) {
+	private void populateMetalInfo(String eachLine) throws IdontKnowException {
 		Metal metal = new Metal();
 		String[] tokens = eachLine.split(" ");
-		int indexOfIs = getIndexOfIs(tokens);
-		if (indexOfIs < 0) {
-			throw new RuntimeException(
-					"Callibration Error - Non Single Digit Unit - I do not know what is this - "
-							+ eachLine);
-		}
+		int indexOfIs = getIndexOfIs(eachLine);
 		String[] galaxyCreditInfoTokens = getTokensBeforeIs(tokens, indexOfIs);
 		String[] numericCreditInfoTokens = getTokensAfterIs(tokens, indexOfIs);
 		Map<Integer, String> metalsInfoMap = extractMetalsInfo(galaxyCreditInfoTokens);
@@ -133,7 +129,7 @@ public class GalaxyProcessor implements Processor {
 
 	}
 
-	private int calculateGalacticCredits(String galaxyCredits, String metalName) {
+	private int calculateGalacticCredits(String galaxyCredits, String metalName) throws IdontKnowException {
 		String givenGalaxyCredits = null;
 		int givenNumericCredit = 0, numeric = 0;
 		for (Metal metal : metalInfoList) {
@@ -143,6 +139,9 @@ public class GalaxyProcessor implements Processor {
 				break;
 			}
 
+		}
+		if(givenGalaxyCredits==null){
+			throw new IdontKnowException("I do not know what is this ", metalName);
 		}
 		numeric = ruleOfThree(givenGalaxyCredits, givenNumericCredit,
 				galaxyCredits);
@@ -186,11 +185,7 @@ public class GalaxyProcessor implements Processor {
 	private String handleQuery(String eachLine) throws IdontKnowException {
 
 		String[] tokens = eachLine.split(" ");
-		int indexOfIs = getIndexOfIs(tokens);
-		if (indexOfIs < 0) {
-			throw new IdontKnowException("I do not know what is this - ",
-					eachLine);
-		}
+		int indexOfIs = getIndexOfIs(eachLine);
 
 		String queryType = toString(getTokensBeforeIs(tokens, indexOfIs));
 		String[] tokensAfterIs = getTokensAfterIs(tokens, indexOfIs);
@@ -221,8 +216,14 @@ public class GalaxyProcessor implements Processor {
 	}
 
 	// utility for galaxy
-	private int getIndexOfIs(String[] tokens) {
-		return (Arrays.asList(tokens)).indexOf("is");
+	private int getIndexOfIs(String eachLine) throws IdontKnowException {
+		String[] tokens = eachLine.split(" ");
+		int indexOfIs = (Arrays.asList(tokens)).indexOf("is");
+		if (indexOfIs < 0) { // TODO : Create custom UnitsCalibrationException
+			throw new IdontKnowException("I do Not Know what is this",
+					eachLine);
+		}
+		return indexOfIs;
 	}
 
 	private String[] getTokensAfterIs(String[] tokens, int indexOfIs) {

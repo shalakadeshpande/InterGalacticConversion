@@ -16,10 +16,8 @@ public class FileReader implements MyReadable {
 	public List<String> read() {
 		List<String> contents = new ArrayList<String>();
 		
-		System.out.println("Read file - platform independent code here..");
-		
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(
-				new FileInputStream("/Users/deshpash/input.txt")))) {
+				new FileInputStream("input.txt")))) {
 
 			// reading file content line by line
 			String line = reader.readLine();

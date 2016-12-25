@@ -149,17 +149,29 @@ public class InterGalacticConverter {
 		}
 
 		String queryType = toString(getTokensBeforeIs(tokens, indexOfIs));
-		String queryParams = toString(getTokensAfterIs(tokens, indexOfIs));
+		String[] tokensAfterIs = getTokensAfterIs(tokens, indexOfIs);
+		String queryParams = toString(tokensAfterIs);
+		String queryParamsTrim = queryParams.replaceAll("\\?", "").trim();
 
 		// TODO think what if other question pattern gets added - decouple this
-
+		int numeric = 0;
+		String metalName = null;
 		if (queryType.toLowerCase().startsWith("how much")) {
-			String queryParamsTrim = queryParams.replaceAll("\\?", "").trim();
-			int numeric = calculateGalacticToNumeric(queryParamsTrim);
-			return prepareOutputLine(queryParamsTrim, numeric, true);
+
+			numeric = calculateGalacticCredits(queryParamsTrim);
+			return prepareOutputLine(queryParamsTrim, numeric, false);
 		} else {
-			System.out.println("handle how many for " + eachLine);
-			return prepareOutputLine("", 0, true);
+			Map<Integer, String> metalsInfo = extractMetalsInfo(tokensAfterIs);
+			int indexOfMetalName = 0;
+			for (Entry<Integer, String> entry : metalsInfo.entrySet()) {
+				indexOfMetalName = entry.getKey();
+				metalName = entry.getValue();
+			}
+			String galacticCredit = toString(Arrays.copyOfRange(tokensAfterIs,
+					0, indexOfMetalName));
+			numeric = calculateGalacticCredits(galacticCredit, metalName);
+
+			return prepareOutputLine(queryParamsTrim, numeric, true);
 		}
 
 	}
@@ -174,11 +186,42 @@ public class InterGalacticConverter {
 		return output.toString();
 	}
 
-	private int calculateGalacticToNumeric(String galaxyCredits) {
+	private int calculateGalacticCredits(String galaxyCredits) {
 		String galaxyCreditsInRoman = GalaxyToRomanConverter.decode(
 				galaxyCredits, galacticToRomanUnits);
 		return RomanToNumericConverter.decode(galaxyCreditsInRoman);
 
+	}
+
+	private int calculateGalacticCredits(String galaxyCredits, String metalName) {
+		String givenGalaxyCredits = null;
+		int givenNumericCredit = 0, numeric = 0;
+		for (Metal metal : metalInfoList) {
+			if (metal.getName().equalsIgnoreCase(metalName)) {
+				givenGalaxyCredits = metal.getGalacticCredit();
+				givenNumericCredit = metal.getNumericCredit();
+				break;
+			}
+
+		}
+		numeric = ruleOfThree(givenGalaxyCredits, givenNumericCredit,
+				galaxyCredits);
+		return numeric;
+	}
+
+	private int ruleOfThree(String givenGalaxyCredits, int givenNumericCredit,
+			String galaxyCredits) {
+
+		int valueA = RomanToNumericConverter.decode(GalaxyToRomanConverter
+				.decode(givenGalaxyCredits, getGalacticToRomanUnits()));
+		int valueB = givenNumericCredit;
+
+		int valueC = RomanToNumericConverter.decode(GalaxyToRomanConverter
+				.decode(galaxyCredits, getGalacticToRomanUnits()));
+
+		int valueD = valueC * valueB / valueA;
+
+		return valueD;
 	}
 
 	public String parseInputNotes() {
@@ -194,7 +237,7 @@ public class InterGalacticConverter {
 				String outputEachLine = handleQuery(eachLine);
 				if (outputToFile.length() != 0) {
 					outputToFile.append(System.getProperty("line.separator"));
-					
+
 				}
 				outputToFile.append(outputEachLine);
 			} else if (hasMetalNames(eachLine)) {
@@ -225,7 +268,7 @@ public class InterGalacticConverter {
 	public static void main(String[] args) {
 		InterGalacticConverter interGalacticConverter = new InterGalacticConverter();
 		String outputToFile = interGalacticConverter.parseInputNotes();
-	
+
 		System.out.println(outputToFile);
 	}
 }

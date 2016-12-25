@@ -1,4 +1,4 @@
-package InputReader;
+package inputReader;
 
 import java.util.List;
 

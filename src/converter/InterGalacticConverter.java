@@ -1,11 +1,12 @@
 package converter;
 
+import inputReader.InputReaderFactory;
+import inputReader.Reader;
+
 import java.util.List;
 
 import processor.Processor;
 import processor.ProcessorFactory;
-import InputReader.InputReaderFactory;
-import InputReader.Reader;
 
 public class InterGalacticConverter {
 

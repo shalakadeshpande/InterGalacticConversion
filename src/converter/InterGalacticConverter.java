@@ -13,8 +13,8 @@ import domain.Metal;
 import domain.MetalNames;
 
 public class InterGalacticConverter {
-	
-	//TODO warn: this file is becoming too large!!
+
+	// TODO warn: this file is becoming too large!!
 
 	private Map<String, String> galacticToRomanUnits = new HashMap<String, String>();
 	private List<Metal> metalInfoList = new ArrayList<>();
@@ -94,10 +94,10 @@ public class InterGalacticConverter {
 			indexOfMetalName = entry.getKey();
 			metal.setName(entry.getValue());
 		}
-		String galacticCredit = Arrays.toString(Arrays.copyOfRange(
+		String galacticCredit = toString(Arrays.copyOfRange(
 				galaxyCreditInfoTokens, 0, indexOfMetalName));
-		int numericCredit = Integer.parseInt(Arrays.toString(
-				numericCreditInfoTokens).replaceAll("[^0-9]", ""));
+		int numericCredit = Integer.parseInt(toString(numericCreditInfoTokens)
+				.replaceAll("[^0-9]", ""));
 
 		metal.setGalacticCredit(galacticCredit);
 		metal.setNumericCredit(numericCredit);
@@ -105,6 +105,18 @@ public class InterGalacticConverter {
 		// TODO validateMetalInfo(metal);
 
 		metalInfoList.add(metal);
+	}
+
+	private static String toString(String[] values) {
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < values.length; i++) {
+			if (i != 0)
+				sb.append(" ");
+			sb.append(values[i].toString());
+		}
+		return sb.toString();
+
 	}
 
 	private Map<Integer, String> extractMetalsInfo(
@@ -119,7 +131,6 @@ public class InterGalacticConverter {
 				metalsInfoMap.put(
 						(Arrays.asList(galaxyCreditInfoTokens)).indexOf(token),
 						token);
-				// Arrays.binarySearch(galaxyCreditInfoTokens, token)
 
 			}
 
@@ -127,29 +138,78 @@ public class InterGalacticConverter {
 		return metalsInfoMap;
 	}
 
-	private void handleQuery(String eachLine) {
-		System.out.println("handle query for " + eachLine);
+	private String handleQuery(String eachLine) {
+
+		String[] tokens = eachLine.split(" ");
+		int indexOfIs = getIndexOfIs(tokens);
+		if (indexOfIs < 0) {
+			throw new RuntimeException(
+					"Callibration Error - Non Single Digit Unit - I do not know what is this - "
+							+ eachLine);
+		}
+
+		String queryType = toString(getTokensBeforeIs(tokens, indexOfIs));
+		String queryParams = toString(getTokensAfterIs(tokens, indexOfIs));
+
+		// TODO think what if other question pattern gets added - decouple this
+
+		if (queryType.toLowerCase().startsWith("how much")) {
+			String queryParamsTrim = queryParams.replaceAll("\\?", "").trim();
+			int numeric = calculateGalacticToNumeric(queryParamsTrim);
+			return prepareOutputLine(queryParamsTrim, numeric, true);
+		} else {
+			System.out.println("handle how many for " + eachLine);
+			return prepareOutputLine("", 0, true);
+		}
+
 	}
 
-	public void parseInputNotes() {
+	private String prepareOutputLine(String queryParamsTrim, int numeric,
+			boolean appendCrdits) {
+		StringBuilder output = new StringBuilder();
+		output = output.append(queryParamsTrim).append(" is ").append(numeric);
+		if (appendCrdits) {
+			output.append(" Credits");
+		}
+		return output.toString();
+	}
+
+	private int calculateGalacticToNumeric(String galaxyCredits) {
+		String galaxyCreditsInRoman = GalaxyToRomanConverter.decode(
+				galaxyCredits, galacticToRomanUnits);
+		return RomanToNumericConverter.decode(galaxyCreditsInRoman);
+
+	}
+
+	public String parseInputNotes() {
+		StringBuilder outputToFile = new StringBuilder();
 		MyReadable reader = InputReaderFactory.getInputReader("FILE");
 		List<String> fileContents = reader.read();
+
+		// TODO Create ProcessorFactory similar to InputReaderFactory to get
+		// GalaxyProcessor
 		for (String eachLine : fileContents) {
-			if (!hasQuestionMark(eachLine) && hasMetalNames(eachLine)) {
+
+			if (hasQuestion(eachLine)) {
+				String outputEachLine = handleQuery(eachLine);
+				if (outputToFile.length() != 0) {
+					outputToFile.append(System.getProperty("line.separator"));
+					
+				}
+				outputToFile.append(outputEachLine);
+			} else if (hasMetalNames(eachLine)) {
 				populateMetalInfo(eachLine);
-			} else if (hasQuestionMark(eachLine)) {
-				handleQuery(eachLine);
 			} else {
 				populateGalacticToRomanMap(eachLine);
 			}
 
 		}
-
+		return outputToFile.toString();
 	}
 
-	private boolean hasQuestionMark(String eachLine) {
+	private boolean hasQuestion(String eachLine) {
 		String inputLine = eachLine.trim();
-		return inputLine.indexOf('?') == inputLine.length() - 1;
+		return inputLine.endsWith("?");
 	}
 
 	private boolean hasMetalNames(String eachLine) {
@@ -164,8 +224,8 @@ public class InterGalacticConverter {
 
 	public static void main(String[] args) {
 		InterGalacticConverter interGalacticConverter = new InterGalacticConverter();
-		interGalacticConverter.parseInputNotes();
-		System.out.println(interGalacticConverter.getGalacticToRomanUnits());
-		System.out.println(interGalacticConverter.getMetalInfoList());
+		String outputToFile = interGalacticConverter.parseInputNotes();
+	
+		System.out.println(outputToFile);
 	}
 }

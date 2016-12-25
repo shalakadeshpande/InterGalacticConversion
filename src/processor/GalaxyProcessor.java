@@ -11,6 +11,7 @@ import converter.GalaxyToRomanConverter;
 import converter.RomanToNumericConverter;
 import domain.Metal;
 import domain.MetalNames;
+import exceptions.IdontKnowException;
 
 public class GalaxyProcessor implements Processor {
 	private Map<String, String> galacticToRomanUnits = new HashMap<String, String>();
@@ -39,7 +40,12 @@ public class GalaxyProcessor implements Processor {
 		for (String eachLine : fileContents) {
 
 			if (hasQuestion(eachLine)) {
-				String outputEachLine = handleQuery(eachLine);
+				String outputEachLine;
+				try {
+					outputEachLine = handleQuery(eachLine);
+				} catch (IdontKnowException e) {
+					outputEachLine = e.getMessage() + " " + e.getInput();
+				}
 				if (outputToFile.length() != 0) {
 					outputToFile.append(System.getProperty("line.separator"));
 
@@ -177,14 +183,13 @@ public class GalaxyProcessor implements Processor {
 		return metalsInfoMap;
 	}
 
-	private String handleQuery(String eachLine) {
+	private String handleQuery(String eachLine) throws IdontKnowException {
 
 		String[] tokens = eachLine.split(" ");
 		int indexOfIs = getIndexOfIs(tokens);
 		if (indexOfIs < 0) {
-			throw new RuntimeException(
-					"Callibration Error - Non Single Digit Unit - I do not know what is this - "
-							+ eachLine);
+			throw new IdontKnowException("I do not know what is this - ",
+					eachLine);
 		}
 
 		String queryType = toString(getTokensBeforeIs(tokens, indexOfIs));

@@ -2,7 +2,7 @@ package InputReader;
 
 import java.util.List;
 
-public interface MyReadable {
+public interface Reader {
 
 	public List<String> read();
 

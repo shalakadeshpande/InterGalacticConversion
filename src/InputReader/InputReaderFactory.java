@@ -2,8 +2,8 @@ package InputReader;
 
 public class InputReaderFactory {
 
-	public static MyReadable getInputReader(String type) {
-		MyReadable reader = null;
+	public static Reader getInputReader(String type) {
+		Reader reader = null;
 		switch (type) {
 		case "FILE":
 			reader = new FileReader();

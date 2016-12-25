@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class FileReader implements MyReadable {
+public class FileReader implements Reader {
 
 	@Override
 	public List<String> read() {

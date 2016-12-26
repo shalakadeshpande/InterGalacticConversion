@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import utility.Constants;
 import utility.GalaxyUtility;
 import converter.GalaxyToRomanConverter;
 import converter.RomanToNumericConverter;
 import domain.Metal;
-import domain.MetalNames;
 import exceptions.IdontKnowException;
 
 public class GalaxyProcessor implements Processor {
@@ -43,7 +43,7 @@ public class GalaxyProcessor implements Processor {
 			try {
 				if (hasQuestion(eachLine)) {
 					outputEachLine = handleQuery(eachLine);
-					
+
 					if (outputToFile.length() != 0) {
 						outputToFile.append(System
 								.getProperty("line.separator"));
@@ -55,11 +55,10 @@ public class GalaxyProcessor implements Processor {
 					populateGalacticToRomanMap(eachLine);
 				}
 			} catch (IdontKnowException e) {
-				outputToFile.append(System
-						.getProperty("line.separator"));
+				outputToFile.append(System.getProperty("line.separator"));
 				outputEachLine = e.getMessage() + " " + e.getInput();
 				outputToFile.append(outputEachLine);
-				
+
 			}
 
 		}
@@ -77,7 +76,8 @@ public class GalaxyProcessor implements Processor {
 		String[] tokens = eachLine.split(" ");
 		int indexOfIs = GalaxyUtility.getIndexOfIs(eachLine);
 
-		String[] galaxyUnit = GalaxyUtility.getTokensBeforeIs(tokens, indexOfIs);
+		String[] galaxyUnit = GalaxyUtility
+				.getTokensBeforeIs(tokens, indexOfIs);
 		String[] romanUnit = GalaxyUtility.getTokensAfterIs(tokens, indexOfIs);
 		validateUnit(eachLine, galaxyUnit);
 		validateUnit(eachLine, romanUnit);
@@ -101,8 +101,10 @@ public class GalaxyProcessor implements Processor {
 		Metal metal = new Metal();
 		String[] tokens = eachLine.split(" ");
 		int indexOfIs = GalaxyUtility.getIndexOfIs(eachLine);
-		String[] galaxyCreditInfoTokens = GalaxyUtility.getTokensBeforeIs(tokens, indexOfIs);
-		String[] numericCreditInfoTokens = GalaxyUtility.getTokensAfterIs(tokens, indexOfIs);
+		String[] galaxyCreditInfoTokens = GalaxyUtility.getTokensBeforeIs(
+				tokens, indexOfIs);
+		String[] numericCreditInfoTokens = GalaxyUtility.getTokensAfterIs(
+				tokens, indexOfIs);
 		Map<Integer, String> metalsInfoMap = extractMetalsInfo(galaxyCreditInfoTokens);
 		int indexOfMetalName = 0;
 		for (Entry<Integer, String> entry : metalsInfoMap.entrySet()) {
@@ -111,8 +113,8 @@ public class GalaxyProcessor implements Processor {
 		}
 		String galacticCredit = GalaxyUtility.toString(Arrays.copyOfRange(
 				galaxyCreditInfoTokens, 0, indexOfMetalName));
-		int numericCredit = Integer.parseInt(GalaxyUtility.toString(numericCreditInfoTokens)
-				.replaceAll("[^0-9]", ""));
+		int numericCredit = Integer.parseInt(GalaxyUtility.toString(
+				numericCreditInfoTokens).replaceAll("[^0-9]", ""));
 
 		metal.setGalacticCredit(galacticCredit);
 		metal.setNumericCredit(numericCredit);
@@ -129,7 +131,8 @@ public class GalaxyProcessor implements Processor {
 
 	}
 
-	private int calculateGalacticCredits(String galaxyCredits, String metalName) throws IdontKnowException {
+	private int calculateGalacticCredits(String galaxyCredits, String metalName)
+			throws IdontKnowException {
 		String givenGalaxyCredits = null;
 		int givenNumericCredit = 0, numeric = 0;
 		for (Metal metal : metalInfoList) {
@@ -140,8 +143,9 @@ public class GalaxyProcessor implements Processor {
 			}
 
 		}
-		if(givenGalaxyCredits==null){
-			throw new IdontKnowException("I do not know what is this ", metalName);
+		if (givenGalaxyCredits == null) {
+			throw new IdontKnowException("I do not know what is this ",
+					metalName);
 		}
 		numeric = ruleOfThree(givenGalaxyCredits, givenNumericCredit,
 				galaxyCredits);
@@ -164,20 +168,19 @@ public class GalaxyProcessor implements Processor {
 	}
 
 	private Map<Integer, String> extractMetalsInfo(
-			String[] galaxyCreditInfoTokens) {
+			String[] galaxyCreditInfoTokens) throws IdontKnowException {
 		Map<Integer, String> metalsInfoMap = new HashMap<>();
 		for (String token : galaxyCreditInfoTokens) {
 			// TODO make generic for metal names : what if new metal gets added
 			// to enum?
-			if (token.equalsIgnoreCase(MetalNames.GOLD.name())
-					|| token.equalsIgnoreCase(MetalNames.SILVER.name())
-					|| token.equalsIgnoreCase(MetalNames.IRON.name())) {
+			if (Arrays.asList(Constants.Metals).contains(token.toUpperCase())) {
 				metalsInfoMap.put(
 						(Arrays.asList(galaxyCreditInfoTokens)).indexOf(token),
 						token);
-
 			}
-
+		}
+		if(metalsInfoMap.isEmpty()){
+			throw new IdontKnowException("I Dont know what is this", GalaxyUtility.toString(galaxyCreditInfoTokens));
 		}
 		return metalsInfoMap;
 	}
@@ -187,8 +190,10 @@ public class GalaxyProcessor implements Processor {
 		String[] tokens = eachLine.split(" ");
 		int indexOfIs = GalaxyUtility.getIndexOfIs(eachLine);
 
-		String queryType = GalaxyUtility.toString(GalaxyUtility.getTokensBeforeIs(tokens, indexOfIs));
-		String[] tokensAfterIs = GalaxyUtility.getTokensAfterIs(tokens, indexOfIs);
+		String queryType = GalaxyUtility.toString(GalaxyUtility
+				.getTokensBeforeIs(tokens, indexOfIs));
+		String[] tokensAfterIs = GalaxyUtility.getTokensAfterIs(tokens,
+				indexOfIs);
 		String queryParams = GalaxyUtility.toString(tokensAfterIs);
 		String queryParamsTrim = queryParams.replaceAll("\\?", "").trim();
 
@@ -198,7 +203,8 @@ public class GalaxyProcessor implements Processor {
 		if (queryType.toLowerCase().startsWith("how much")) {
 
 			numeric = calculateGalacticCredits(queryParamsTrim);
-			return GalaxyUtility.prepareOutputLine(queryParamsTrim, numeric, false);
+			return GalaxyUtility.prepareOutputLine(queryParamsTrim, numeric,
+					false);
 		} else {
 			Map<Integer, String> metalsInfo = extractMetalsInfo(tokensAfterIs);
 			int indexOfMetalName = 0;
@@ -206,11 +212,12 @@ public class GalaxyProcessor implements Processor {
 				indexOfMetalName = entry.getKey();
 				metalName = entry.getValue();
 			}
-			String galacticCredit = GalaxyUtility.toString(Arrays.copyOfRange(tokensAfterIs,
-					0, indexOfMetalName));
+			String galacticCredit = GalaxyUtility.toString(Arrays.copyOfRange(
+					tokensAfterIs, 0, indexOfMetalName));
 			numeric = calculateGalacticCredits(galacticCredit, metalName);
 
-			return GalaxyUtility.prepareOutputLine(queryParamsTrim, numeric, true);
+			return GalaxyUtility.prepareOutputLine(queryParamsTrim, numeric,
+					true);
 		}
 
 	}

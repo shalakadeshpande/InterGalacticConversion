@@ -1,4 +1,3 @@
 Add exception messages 
-What if new metal is to be added
 Write Validations
 **> Write Junits

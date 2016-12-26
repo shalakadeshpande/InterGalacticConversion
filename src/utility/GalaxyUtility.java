@@ -2,7 +2,6 @@ package utility;
 
 import java.util.Arrays;
 
-import domain.MetalNames;
 import exceptions.IdontKnowException;
 
 public class GalaxyUtility {
@@ -49,9 +48,18 @@ public class GalaxyUtility {
 		String input = eachLine.toUpperCase();
 		// TODO make generic for metal names : what if new metal gets added to
 		// enum?
-		boolean hasMetalName = input.contains(MetalNames.GOLD.name())
-				|| input.contains(MetalNames.SILVER.name())
-				|| input.contains(MetalNames.IRON.name());
+		boolean hasMetalName = false;
+		// Arrays.asList(Constants.Metals).contains(input);
+		for (String metalName : Arrays.asList(Constants.Metals)) {
+			if (input.contains(metalName)) {
+				hasMetalName = true;
+				break;
+			}
+
+		}
+		// input.contains(MetalNames.GOLD.name())
+		// || input.contains(MetalNames.SILVER.name())
+		// || input.contains(MetalNames.IRON.name());
 		return hasMetalName;
 	}
 

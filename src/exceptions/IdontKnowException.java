@@ -2,13 +2,20 @@ package exceptions;
 
 import java.io.IOException;
 
+import utility.Constants;
+
 public class IdontKnowException extends IOException {
 	private String message;
 	private String input;
 
-	public IdontKnowException(String message, String input) {
+//	public IdontKnowException(String message, String input) {
+//		super();
+//		this.message = message;
+//		this.input = input;
+//	}
+	public IdontKnowException(String input) {
 		super();
-		this.message = message;
+		this.message = Constants.ERROR_MESSAGE;
 		this.input = input;
 	}
 

@@ -9,7 +9,7 @@ public class GalaxyUtility {
 		String[] tokens = eachLine.split(" ");
 		int indexOfIs = (Arrays.asList(tokens)).indexOf("is");
 		if (indexOfIs < 0) {
-			throw new IdontKnowException("I do Not Know what is this", eachLine);
+			throw new IdontKnowException(eachLine);
 		}
 		return indexOfIs;
 	}
@@ -50,7 +50,7 @@ public class GalaxyUtility {
 		// enum?
 		boolean hasMetalName = false;
 		// Arrays.asList(Constants.Metals).contains(input);
-		for (String metalName : Arrays.asList(Constants.Metals)) {
+		for (String metalName : Arrays.asList(Constants.METALS)) {
 			if (input.contains(metalName)) {
 				hasMetalName = true;
 				break;

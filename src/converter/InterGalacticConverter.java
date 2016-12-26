@@ -7,6 +7,7 @@ import java.util.List;
 
 import processor.Processor;
 import processor.ProcessorFactory;
+import writer.WriterFactory;
 
 public class InterGalacticConverter {
 
@@ -16,7 +17,7 @@ public class InterGalacticConverter {
 
 		Processor processor = ProcessorFactory.getProcessor("GALAXY");
 		String outputToFile = processor.process(fileContents);
-		
+
 		return outputToFile;
 	}
 
@@ -24,6 +25,17 @@ public class InterGalacticConverter {
 		InterGalacticConverter interGalacticConverter = new InterGalacticConverter();
 		String outputToFile = interGalacticConverter.parseInputNotes();
 
-		System.out.println(outputToFile);
+		boolean success = writeToFile(outputToFile);
+
+		if (success) {
+			System.out
+					.println("SuccessFully Written output to output.txt file");
+		} else {
+			System.out.println("Failed to write output to file");
+		}
+	}
+
+	private static boolean writeToFile(String outputToFile) {
+		return WriterFactory.getWriter("FILE").write(outputToFile);
 	}
 }

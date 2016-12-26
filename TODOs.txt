@@ -1,0 +1,4 @@
+Add exception messages 
+Write output to file
+What if new metal is to be added
+Write Validations

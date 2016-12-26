@@ -19,7 +19,7 @@ public class GalaxyToRomanConverter {
 	private static String getRoman(Map<String, String> galacticToRomanUnits,
 			String token) {
 		String romanStr = galacticToRomanUnits.get(token);
-		if ("null".equals(romanStr)) {
+		if (romanStr == null) {
 			throw new RuntimeException(
 					"Callibration Error - Non Single Digit Unit - I do not know what is this - "
 							+ romanStr);

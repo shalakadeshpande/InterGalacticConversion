@@ -3,8 +3,15 @@ package domain;
 public class Metal {
 
 	private String name;
-	private String galacticCredit;
-	private int numericCredit;
+	private int rate;
+
+	public int getRate() {
+		return rate;
+	}
+
+	public void setRate(int rate) {
+		this.rate = rate;
+	}
 
 	public String getName() {
 		return name;
@@ -14,26 +21,9 @@ public class Metal {
 		this.name = name;
 	}
 
-	public String getGalacticCredit() {
-		return galacticCredit;
-	}
-
-	public void setGalacticCredit(String galacticCredit) {
-		this.galacticCredit = galacticCredit;
-	}
-
-	public int getNumericCredit() {
-		return numericCredit;
-	}
-
-	public void setNumericCredit(int numericCredit) {
-		this.numericCredit = numericCredit;
-	}
-
 	@Override
 	public String toString() {
-		return "Metal [name=" + name + ", galacticCredit=" + galacticCredit
-				+ ", numericCredit=" + numericCredit + "]";
+		return "Metal [name=" + name + ", rate=" + rate + "]";
 	}
 
 }

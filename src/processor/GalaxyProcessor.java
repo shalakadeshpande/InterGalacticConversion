@@ -111,17 +111,25 @@ public class GalaxyProcessor implements Processor {
 			indexOfMetalName = entry.getKey();
 			metal.setName(entry.getValue());
 		}
+
 		String galacticCredit = GalaxyUtility.toString(Arrays.copyOfRange(
 				galaxyCreditInfoTokens, 0, indexOfMetalName));
 		int numericCredit = Integer.parseInt(GalaxyUtility.toString(
 				numericCreditInfoTokens).replaceAll("[^0-9]", ""));
 
-		metal.setGalacticCredit(galacticCredit);
-		metal.setNumericCredit(numericCredit);
+		metal.setRate(calculateRate(galacticCredit, numericCredit));
 
 		// TODO validateMetalInfo(metal);
 
 		metalInfoList.add(metal);
+	}
+
+	private int calculateRate(String galacticCredit, int numericCredit) {
+		int galacticCreditToNumeric = RomanToNumericConverter
+				.decode(GalaxyToRomanConverter.decode(galacticCredit,
+						galacticToRomanUnits));
+
+		return numericCredit / galacticCreditToNumeric;
 	}
 
 	private int calculateGalacticCredits(String galaxyCredits) {
@@ -133,54 +141,35 @@ public class GalaxyProcessor implements Processor {
 
 	private int calculateGalacticCredits(String galaxyCredits, String metalName)
 			throws IdontKnowException {
-		String givenGalaxyCredits = null;
-		int givenNumericCredit = 0, numeric = 0;
+		int numeric = 0, rate = 0;
 		for (Metal metal : metalInfoList) {
 			if (metal.getName().equalsIgnoreCase(metalName)) {
-				givenGalaxyCredits = metal.getGalacticCredit();
-				givenNumericCredit = metal.getNumericCredit();
+				rate = metal.getRate();
 				break;
 			}
 
 		}
-		if (givenGalaxyCredits == null) {
-			throw new IdontKnowException("I do not know what is this ",
-					metalName);
+		if (rate == 0) {
+			throw new IdontKnowException(metalName);
 		}
-		numeric = ruleOfThree(givenGalaxyCredits, givenNumericCredit,
-				galaxyCredits);
+		numeric = (RomanToNumericConverter.decode(GalaxyToRomanConverter
+				.decode(galaxyCredits, galacticToRomanUnits))) * rate;
 		return numeric;
-	}
-
-	private int ruleOfThree(String givenGalaxyCredits, int givenNumericCredit,
-			String galaxyCredits) {
-
-		int valueA = RomanToNumericConverter.decode(GalaxyToRomanConverter
-				.decode(givenGalaxyCredits, getGalacticToRomanUnits()));
-		int valueB = givenNumericCredit;
-
-		int valueC = RomanToNumericConverter.decode(GalaxyToRomanConverter
-				.decode(galaxyCredits, getGalacticToRomanUnits()));
-
-		int valueD = valueC * valueB / valueA;
-
-		return valueD;
 	}
 
 	private Map<Integer, String> extractMetalsInfo(
 			String[] galaxyCreditInfoTokens) throws IdontKnowException {
 		Map<Integer, String> metalsInfoMap = new HashMap<>();
 		for (String token : galaxyCreditInfoTokens) {
-			// TODO make generic for metal names : what if new metal gets added
-			// to enum?
-			if (Arrays.asList(Constants.Metals).contains(token.toUpperCase())) {
+			if (Arrays.asList(Constants.METALS).contains(token.toUpperCase())) {
 				metalsInfoMap.put(
 						(Arrays.asList(galaxyCreditInfoTokens)).indexOf(token),
 						token);
 			}
 		}
-		if(metalsInfoMap.isEmpty()){
-			throw new IdontKnowException("I Dont know what is this", GalaxyUtility.toString(galaxyCreditInfoTokens));
+		if (metalsInfoMap.isEmpty()) {
+			throw new IdontKnowException(
+					GalaxyUtility.toString(galaxyCreditInfoTokens));
 		}
 		return metalsInfoMap;
 	}

@@ -61,3 +61,12 @@ glob prok Silver is 68 Credits<br/>
 glob prok Gold is 57800 Credits<br/>
 glob prok Iron is 782 Credits<br/>
 I have no idea what you are talking about<br/>
+
+Grammars Handled - 
+<galaxy_unit> is <roman_unit>
+<galaxy_unit><metal_name> is <number> credits
+how much is <galaxy_unit> ?
+how many Credits is <galaxy_unit> <metal_name> ?
+
+
+

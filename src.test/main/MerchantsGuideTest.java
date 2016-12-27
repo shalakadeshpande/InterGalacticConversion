@@ -10,7 +10,7 @@ public class MerchantsGuideTest {
 
 	@Test
 	public void testParseInputNotes() {
-		String output = interGalacticConverter.parseInputNotes();
+		String output = interGalacticConverter.readNotesFromFile();
 		StringBuilder expectedOutput = new StringBuilder("").
 				append("pish tegj glob glob is 42").
 				append(System.getProperty("line.separator")).

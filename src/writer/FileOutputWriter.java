@@ -1,7 +1,11 @@
 package writer;
 
+import inputReader.FileReader;
+
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FileOutputWriter implements Writer {
 
@@ -14,7 +18,8 @@ public class FileOutputWriter implements Writer {
 			writer.close();
 			status = true;
 		} catch (IOException e) {
-			// do something
+			Logger.getLogger(FileReader.class.getName()).log(Level.SEVERE,
+					null, e);
 		}
 		return status;
 	}

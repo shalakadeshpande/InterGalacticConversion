@@ -86,15 +86,11 @@ public class GalaxyProcessor implements Processor {
 	}
 
 	private void validateUnit(String eachLine, String[] unit) {
-		// TODO : Handle corner case - what if glob is II?
-		// TODO : Verify against valid Roman digits?
-
 		if (unit.length != 1) {
 			throw new RuntimeException(
 					"Invalid Roman Digit - I do not know what is this - "
 							+ Arrays.toString(unit));
 		}
-
 	}
 
 	private void populateMetalInfo(String eachLine) throws IdontKnowException {
@@ -118,8 +114,6 @@ public class GalaxyProcessor implements Processor {
 				numericCreditInfoTokens).replaceAll("[^0-9]", ""));
 
 		metal.setRate(calculateRate(galacticCredit, numericCredit));
-
-		// TODO validateMetalInfo(metal);
 
 		metalInfoList.add(metal);
 	}
@@ -186,7 +180,6 @@ public class GalaxyProcessor implements Processor {
 		String queryParams = GalaxyUtility.toString(tokensAfterIs);
 		String queryParamsTrim = queryParams.replaceAll("\\?", "").trim();
 
-		// TODO think what if other question pattern gets added - decouple this
 		int numeric = 0;
 		String metalName = null;
 		if (queryType.toLowerCase().startsWith("how much")) {

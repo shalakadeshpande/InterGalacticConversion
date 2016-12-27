@@ -50,8 +50,9 @@ public class GalaxyUtilityTest {
 		String output = GalaxyUtility.prepareOutputLine("glob prok Wood", 12,
 				true);
 		Assert.assertEquals(output, "glob prok Wood is 12 Credits");
-		GalaxyUtility.prepareOutputLine("pish tegj glob glob", 42, false);
-		Assert.assertEquals(output, "glob prok Wood is 12 Credits");
+		output = GalaxyUtility.prepareOutputLine("pish tegj glob glob", 42,
+				false);
+		Assert.assertEquals(output, "pish tegj glob glob is 42");
 	}
 
 }

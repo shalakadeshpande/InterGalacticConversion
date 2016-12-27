@@ -5,7 +5,7 @@ import java.util.Arrays;
 import exceptions.IdontKnowException;
 
 public class GalaxyUtility {
-	public static int getIndexOfIs(String eachLine) throws IdontKnowException {
+	public static int getIndexOfIs(final String eachLine) throws IdontKnowException {
 		String[] tokens = eachLine.split(" ");
 		int indexOfIs = (Arrays.asList(tokens)).indexOf("is");
 		if (indexOfIs < 0) {
@@ -14,15 +14,15 @@ public class GalaxyUtility {
 		return indexOfIs;
 	}
 
-	public static String[] getTokensAfterIs(String[] tokens, int indexOfIs) {
+	public static String[] getTokensAfterIs(final String[] tokens, final int indexOfIs) {
 		return Arrays.copyOfRange(tokens, indexOfIs + 1, tokens.length);
 	}
 
-	public static String[] getTokensBeforeIs(String[] tokens, int indexOfIs) {
+	public static String[] getTokensBeforeIs(final String[] tokens,final  int indexOfIs) {
 		return Arrays.copyOfRange(tokens, 0, indexOfIs);
 	}
 
-	public static String toString(String[] values) {
+	public static String toString(final String[] values) {
 
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < values.length; i++) {
@@ -34,8 +34,8 @@ public class GalaxyUtility {
 
 	}
 
-	public static String prepareOutputLine(String queryParamsTrim, int numeric,
-			boolean appendCrdits) {
+	public static String prepareOutputLine(final String queryParamsTrim,final  int numeric,
+			final boolean appendCrdits) {
 		StringBuilder output = new StringBuilder();
 		output = output.append(queryParamsTrim).append(" is ").append(numeric);
 		if (appendCrdits) {
@@ -44,12 +44,9 @@ public class GalaxyUtility {
 		return output.toString();
 	}
 
-	public static boolean hasMetalNames(String eachLine) {
+	public static boolean hasMetalNames(final String eachLine) {
 		String input = eachLine.toUpperCase();
-		// TODO make generic for metal names : what if new metal gets added to
-		// enum?
 		boolean hasMetalName = false;
-		// Arrays.asList(Constants.Metals).contains(input);
 		for (String metalName : Arrays.asList(Constants.METALS)) {
 			if (input.contains(metalName)) {
 				hasMetalName = true;
@@ -57,9 +54,6 @@ public class GalaxyUtility {
 			}
 
 		}
-		// input.contains(MetalNames.GOLD.name())
-		// || input.contains(MetalNames.SILVER.name())
-		// || input.contains(MetalNames.IRON.name());
 		return hasMetalName;
 	}
 

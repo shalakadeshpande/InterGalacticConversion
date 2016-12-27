@@ -63,10 +63,10 @@ glob prok Iron is 782 Credits<br/>
 I have no idea what you are talking about<br/>
 
 Grammars Handled - 
-_galaxy_unit_ is _roman_unit_
-_galaxy_unit_ _metal_name_ is _number_ credits
-how much is _galaxy_unit_ ?
-how many Credits is _galaxy_unit_ _metal_name_ ?
+_galaxy_unit_ is _roman_unit_ <br/>
+_galaxy_unit_ _metal_name_ is _number_ credits<br/>
+how much is _galaxy_unit_ ?<br/>
+how many Credits is _galaxy_unit_ _metal_name_ ?<br/>
 
 
 
